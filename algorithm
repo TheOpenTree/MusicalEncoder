@@ -1,0 +1,218 @@
+from guizero import App, Text, PushButton, Picture, TextBox, Combo, Box, CheckBox, MenuBar, Window
+import tkinter as tk
+import random
+
+# How Program will work
+
+# user inputs name and password
+# ask for encryption or decrypytion
+# randomly what key and interval to encode message in(just three different keys for this prodject)
+# as the user to input sentence/data to encode
+    
+# define 3 funtions for three different encoding options(would like to be able to use all 12 keys later)
+# functions will take the number of sharps in said key * the interval selected
+    
+# that number will act as a __rot encoder, moving each letter in the senctence forward or backward in the 
+# alpahbet by that many numbers
+
+# display encoded sentence in a file, along with an audio clip of the key represented by a chord then followed
+# by the interval chosen
+
+# description done by enetering encrpyted sentence, then key , then interval
+
+
+
+# def main():
+
+    
+    
+    # user interface and program options
+    # ask the user for sentence
+    # rand choice for key (define 3 keys)
+    # encryption algorithm
+    # display end result and audio file
+    
+def decode(): 
+    decode_box.show()
+    encode_box.hide()
+
+def encode():
+    encode_box.show()
+    decode_box.hide()
+
+def musicKey():
+    # essentially a randomizer for the amouny of shift applied to message
+    # dosent really have anything to do with music until decoding process
+    #  E,C,Db
+    sharpsInKey = [4,1,7]
+    # second, third, perfect fourth...etc
+    intervals = [2,3,4,5,6,7]
+
+    randKey = random.choice(sharpsInKey)
+    randInterval = random.choice(intervals)
+
+    shift = randKey * randInterval
+    print(shift)
+    return shift
+
+
+def encoderAlgorithm(inputVal: str):
+    
+    global encode_result_text
+     
+    shift = musicKey()
+    # before shift
+    dict1 = {'A' : 1, 'B' : 2, 'C' : 3, 'D' : 4, 'E' : 5,
+        'F' : 6, 'G' : 7, 'H' : 8, 'I' : 9, 'J' : 10,
+        'K' : 11, 'L' : 12, 'M' : 13, 'N' : 14, 'O' : 15,
+        'P' : 16, 'Q' : 17, 'R' : 18, 'S' : 19, 'T' : 20,
+        'U' : 21, 'V' : 22, 'W' : 23, 'X' : 24, 'Y' : 25, 'Z' : 26}
+    # after shift
+    dict2 = {0 : 'Z', 1 : 'A', 2 : 'B', 3 : 'C', 4 : 'D', 5 : 'E',
+        6 : 'F', 7 : 'G', 8 : 'H', 9 : 'I', 10 : 'J',
+        11 : 'K', 12 : 'L', 13 : 'M', 14 : 'N', 15 : 'O',
+        16 : 'P', 17 : 'Q', 18 : 'R', 19 : 'S', 20 : 'T',
+        21 : 'U', 22 : 'V', 23 : 'W', 24 : 'X', 25 : 'Y'}
+    cipher = ''
+
+    # print(val)
+    # encryption code
+    for letter in inputVal.upper():
+        if letter != ' ':
+            num = (dict1[letter] + shift) % 26
+            cipher += dict2[num]
+        else:
+            cipher += ' '
+    # print(cipher)
+    
+    # code to replace spaces 
+    indexOfSpaceList = []
+    # HOLY FUCK THIS NEXT PART TOOK ME FUCKING FOREVER!!!!!TRULY AIDS
+    counter = -1
+   
+    for idx in list(range(len(cipher))):
+        counter += 1
+        if cipher[idx] == ' ':
+            indexOfSpaceList.append(counter)      
+    
+    lengthOfCipherList = list(range(len(cipher)))
+    # terminal verification of index of spaces
+    print(f'this is the length of cipher{lengthOfCipherList}')
+    print(f'this is the encoded message: {cipher}')
+    print(f'this is the index of space list:{indexOfSpaceList}')
+    
+    
+    # return cipher
+
+    # show results on screen 
+    encode_result_text = Text(encode_box, text= f'{cipher}')    
+
+def test_encoderAlgorithm():
+    assert encoderAlgorithm("a") == "N"
+    assert encoderAlgorithm("ba") == "ON"
+
+
+# this function was created to be the destination of the button, as to ensure the actaull function cointaing the algorithm code was a pure fuctions with no/very little gui elements
+def encoderAlgorithmWrapper():
+    return encoderAlgorithm(encode_text_box.value)
+    
+
+    
+def decoderAlgorithm():
+
+    print("decoding")
+
+
+if __name__ == "__main__":
+    # create app window 
+    app = App(title="Musical Encoder")
+    app.height = 750
+    app.width = 1000
+    app.text_color = "Black"
+    app.text_size = 15
+    app.bg = "light grey"
+    Box(app, align="left", height="fill", width=20)
+    Box(app, align="right", height="fill", width=20)
+    Box(app, align="top", height=20, width="fill")
+    Box(app, align="bottom", height=20, width="fill")
+
+    # create menu bar at top of window
+    # menubar = MenuBar(app, toplevel=["File", "Edit", "About"],
+    #                   options=[
+    #                       [ ["Calculate", calculate], ["Reset", reset] ],
+    #                       [ ["Just for looks", edit_function], ["I don't really do anything!", edit_function] ],
+    #                       [ ["About the Author", popup], ["Read me", readme] ]
+    #                   ])
+                    
+    welcome_text = Text(app, text = "Musical Encoder")
+    welcome_text.size = 25
+
+    #create box 1 for input
+
+    box1 = Box(app, width=900, height=200, border=True)
+    Box(box1, align="left", height="fill", width=10)
+    Box(box1, align="right", height="fill", width=10)
+    Box(box1, align="top", height=10, width="fill")
+    Box(box1, align="bottom", height=10, width="fill")
+
+    # create the encoder box 
+    encode_box = Box(app, width=900, height=400, border=True)
+    encode_box.text_size = 22
+    Box(encode_box, align="left", height="fill", width=10)
+    Box(encode_box, align="right", height="fill", width=10)
+    Box(encode_box, align="top", height=10, width="fill")
+    Box(encode_box, align="bottom", height=10, width="fill")
+    # encode_box.bg = 'white'
+    encode_box.hide()
+
+    # create decode box
+
+    decode_box = Box(app, width=900, height=400, border=True)
+    decode_box.text_size = 22
+    Box(decode_box, align="left", height="fill", width=10)
+    Box(decode_box, align="right", height="fill", width=10)
+    Box(decode_box, align="top", height=10, width="fill")
+    Box(decode_box, align="bottom", height=10, width="fill")
+    decode_box.hide()
+
+    #create encode button
+    Menu_encode_button = PushButton(box1, text = 'encode', command = encode, enabled= True, height= 20, width= 25)
+    Menu_encode_button.text_size = 20
+    Menu_encode_button.text_color = 'Black'
+    Menu_encode_button.align = 'bottom'
+    Menu_encode_button.bg = 'white'
+    Menu_encode_button.align = 'left'
+    Menu_encode_button.enable()
+
+    # create decode button 
+    Menu_encode_button = PushButton(box1, text = 'decode', command = decode, enabled= True, height= 20, width= 25)
+    Menu_encode_button.text_size = 20
+    Menu_encode_button.text_color = 'Black'
+    Menu_encode_button.align = 'bottom'
+    Menu_encode_button.bg = 'white'
+    Menu_encode_button.align = 'right'
+    Menu_encode_button.enable()
+
+    # create user innput text for encode
+    encode_input_text = Text(encode_box, text = 'Input the sentence you wish to encode, do not include special characters.')
+    encode_input_text.text_size = 20
+    # create input text box for encode
+    encode_text_box = TextBox(encode_box, width = 100)
+    encode_text_box.bg = "white"
+    encode_text_box.text_size = 16
+    encode_text_box
+
+    # add response for enter key
+
+    # create button to run algorithm 
+    run_encode_button = PushButton(encode_box, text= "run musical encode", command= encoderAlgorithmWrapper)
+    run_encode_button.text_size = 20
+    run_encode_button.text_color = 'red'
+    # encodedMessage = encoderAlgorithm
+    # print(encodedMessage)
+
+
+
+
+    app.display()
+        
